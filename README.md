@@ -337,6 +337,45 @@ lr = LogisticRegression(class_weight='balanced', max_iter=1000, random_state=42)
 lr.fit(X_train, y_train)
 </pre>
 
+<h3>Hyperparameter Tuning</h3>
+<p>
+<b>Hyperparameter tuning</b> adalah proses mencari kombinasi parameter terbaik yang tidak dipelajari secara langsung oleh model dari data, tetapi sangat memengaruhi performa model. Contoh hyperparameter pada <b>Random Forest</b> antara lain jumlah pohon (<code>n_estimators</code>), kedalaman pohon (<code>max_depth</code>), dan jumlah fitur yang dipertimbangkan pada setiap split (<code>max_features</code>).
+</p>
+
+<ul>
+  <li>
+    <b>Alasan Melakukan Hyperparameter Tuning:</b>
+    <ul>
+      <li>Setiap model machine learning memiliki hyperparameter yang dapat diatur untuk mengoptimalkan kinerja model.</li>
+      <li>Pengaturan default belum tentu memberikan hasil terbaik untuk dataset tertentu.</li>
+      <li>Dengan tuning, model dapat mencapai performa maksimal dan menghindari overfitting atau underfitting.</li>
+    </ul>
+  </li>
+  <li>
+    <b>Cara Kerja:</b>
+    <ul>
+      <li>Proses tuning dilakukan dengan mencoba berbagai kombinasi nilai hyperparameter menggunakan metode seperti <b>Grid Search</b> atau <b>Randomized Search</b>.</li>
+      <li>Setiap kombinasi diuji menggunakan cross-validation, dan dipilih kombinasi yang memberikan hasil evaluasi terbaik (misal: balanced accuracy tertinggi).</li>
+    </ul>
+  </li>
+</ul>
+
+<h3>Feature Importance</h3>
+
+<p>
+Setelah model dilatih, dilakukan analisis <b>feature importance</b> untuk mengetahui fitur-fitur apa saja yang paling berpengaruh dalam memprediksi status mahasiswa (<i>Dropout</i> atau <i>Graduate</i>).
+</p>
+
+<h3>1. Feature Importance pada Random Forest</h3>
+<p>
+Random Forest mengukur feature importance berdasarkan kontribusi setiap fitur dalam mengurangi impurity pada proses pemisahan node di seluruh pohon. Nilai importance yang lebih tinggi menunjukkan fitur tersebut lebih sering digunakan dan lebih berpengaruh dalam pengambilan keputusan model.
+</p>
+
+<h3>2. Feature Importance pada Logistic Regression</h3>
+<p>
+Pada Logistic Regression, "feature importance" diukur melalui nilai koefisien (weights) dari setiap fitur pada model. Koefisien positif menunjukkan fitur tersebut meningkatkan kemungkinan prediksi ke kelas target (misal: Dropout), sedangkan koefisien negatif menurunkan kemungkinan tersebut.
+</p>
+
 <h2>Evaluation</h2>
 
 <p>
@@ -430,46 +469,6 @@ FPR = False Positives / (False Positives + True Negatives)
     </ul>
   </li>
 </ul>
-
-
-<h3>Hyperparameter Tuning</h3>
-<p>
-<b>Hyperparameter tuning</b> adalah proses mencari kombinasi parameter terbaik yang tidak dipelajari secara langsung oleh model dari data, tetapi sangat memengaruhi performa model. Contoh hyperparameter pada <b>Random Forest</b> antara lain jumlah pohon (<code>n_estimators</code>), kedalaman pohon (<code>max_depth</code>), dan jumlah fitur yang dipertimbangkan pada setiap split (<code>max_features</code>).
-</p>
-
-<ul>
-  <li>
-    <b>Alasan Melakukan Hyperparameter Tuning:</b>
-    <ul>
-      <li>Setiap model machine learning memiliki hyperparameter yang dapat diatur untuk mengoptimalkan kinerja model.</li>
-      <li>Pengaturan default belum tentu memberikan hasil terbaik untuk dataset tertentu.</li>
-      <li>Dengan tuning, model dapat mencapai performa maksimal dan menghindari overfitting atau underfitting.</li>
-    </ul>
-  </li>
-  <li>
-    <b>Cara Kerja:</b>
-    <ul>
-      <li>Proses tuning dilakukan dengan mencoba berbagai kombinasi nilai hyperparameter menggunakan metode seperti <b>Grid Search</b> atau <b>Randomized Search</b>.</li>
-      <li>Setiap kombinasi diuji menggunakan cross-validation, dan dipilih kombinasi yang memberikan hasil evaluasi terbaik (misal: balanced accuracy tertinggi).</li>
-    </ul>
-  </li>
-</ul>
-
-<h3>Feature Importance</h3>
-
-<p>
-Setelah model dilatih, dilakukan analisis <b>feature importance</b> untuk mengetahui fitur-fitur apa saja yang paling berpengaruh dalam memprediksi status mahasiswa (<i>Dropout</i> atau <i>Graduate</i>).
-</p>
-
-<h3>1. Feature Importance pada Random Forest</h3>
-<p>
-Random Forest mengukur feature importance berdasarkan kontribusi setiap fitur dalam mengurangi impurity pada proses pemisahan node di seluruh pohon. Nilai importance yang lebih tinggi menunjukkan fitur tersebut lebih sering digunakan dan lebih berpengaruh dalam pengambilan keputusan model.
-</p>
-
-<h3>2. Feature Importance pada Logistic Regression</h3>
-<p>
-Pada Logistic Regression, "feature importance" diukur melalui nilai koefisien (weights) dari setiap fitur pada model. Koefisien positif menunjukkan fitur tersebut meningkatkan kemungkinan prediksi ke kelas target (misal: Dropout), sedangkan koefisien negatif menurunkan kemungkinan tersebut.
-</p>
 
 <h2>Hasil dan Pembahasan</h2>
 
