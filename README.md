@@ -195,7 +195,7 @@ Pada tahap ini, data dipersiapkan untuk pemodelan dengan langkah-langkah sebagai
   </li>
   <li>
     <b>Penanganan Outlier dengan IQR:</b>
-    Outlier pada fitur numerik diidentifikasi dan dapat ditangani menggunakan metode Interquartile Range (IQR).
+    Outlier pada fitur numerik diidentifikasi dan dapat ditangani menggunakan metode Interquartile Range (IQR) kemudian outlier dilakukan drop karena jumlahnya lebh dari 50% data.
   </li>
   <li>
     <b>Transformasi Logaritmik:</b>
