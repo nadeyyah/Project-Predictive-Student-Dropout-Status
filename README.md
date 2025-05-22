@@ -337,7 +337,8 @@ lr = LogisticRegression(class_weight='balanced', max_iter=1000, random_state=42)
 lr.fit(X_train, y_train)
 </pre>
 
-# Evaluation
+<h2>Evaluation</h2>
+
 <p>
 Evaluasi model dilakukan untuk mengetahui seberapa baik model dalam mengklasifikasikan mahasiswa ke dalam kategori <b>Dropout</b> dan <b>Graduate</b>. Pada proyek ini, digunakan beberapa metrik evaluasi utama:
 </p>
@@ -350,6 +351,8 @@ Evaluasi model dilakukan untuk mengetahui seberapa baik model dalam mengklasifik
         <b>Rumus:</b><br>
         <pre>
 Balanced Accuracy = (Recall_Kelas_1 + Recall_Kelas_2) / 2
+
+dengan Recall = True Positives / (True Positives + False Negatives)
         </pre>
       </li>
       <li>
@@ -357,6 +360,22 @@ Balanced Accuracy = (Recall_Kelas_1 + Recall_Kelas_2) / 2
       </li>
     </ul>
   </li>
+
+  <li>
+    <b>Recall (True Positive Rate)</b>
+    <ul>
+      <li>
+        <b>Rumus:</b><br>
+        <pre>
+Recall = True Positives / (True Positives + False Negatives)
+        </pre>
+      </li>
+      <li>
+        <b>Penjelasan:</b> Recall mengukur kemampuan model untuk menemukan semua sampel positif yang sebenarnya. Ini sangat penting untuk mengetahui seberapa baik model dalam menangkap kelas positif (misal mahasiswa yang benar-benar dropout).
+      </li>
+    </ul>
+  </li>
+
   <li>
     <b>F1 Score</b>
     <ul>
@@ -364,6 +383,8 @@ Balanced Accuracy = (Recall_Kelas_1 + Recall_Kelas_2) / 2
         <b>Rumus:</b><br>
         <pre>
 F1 = 2 × (Precision × Recall) / (Precision + Recall)
+
+dengan Recall = True Positives / (True Positives + False Negatives)
         </pre>
       </li>
       <li>
@@ -371,6 +392,7 @@ F1 = 2 × (Precision × Recall) / (Precision + Recall)
       </li>
     </ul>
   </li>
+
   <li>
     <b>ROC-AUC (Receiver Operating Characteristic - Area Under Curve)</b>
     <ul>
@@ -378,6 +400,10 @@ F1 = 2 × (Precision × Recall) / (Precision + Recall)
         <b>Rumus:</b><br>
         <pre>
 ROC-AUC = Area di bawah kurva plot TPR (Recall) vs FPR (False Positive Rate)
+
+dengan:
+Recall (TPR) = True Positives / (True Positives + False Negatives)
+FPR = False Positives / (False Positives + True Negatives)
         </pre>
       </li>
       <li>
@@ -385,6 +411,7 @@ ROC-AUC = Area di bawah kurva plot TPR (Recall) vs FPR (False Positive Rate)
       </li>
     </ul>
   </li>
+
   <li>
     <b>Confusion Matrix</b>
     <ul>
@@ -403,6 +430,7 @@ ROC-AUC = Area di bawah kurva plot TPR (Recall) vs FPR (False Positive Rate)
     </ul>
   </li>
 </ul>
+
 
 <h3>Hyperparameter Tuning</h3>
 <p>
@@ -427,7 +455,7 @@ ROC-AUC = Area di bawah kurva plot TPR (Recall) vs FPR (False Positive Rate)
   </li>
 </ul>
 
-<h2>Feature Importance</h2>
+<h3>Feature Importance</h3>
 
 <p>
 Setelah model dilatih, dilakukan analisis <b>feature importance</b> untuk mengetahui fitur-fitur apa saja yang paling berpengaruh dalam memprediksi status mahasiswa (<i>Dropout</i> atau <i>Graduate</i>).
@@ -435,7 +463,8 @@ Setelah model dilatih, dilakukan analisis <b>feature importance</b> untuk menget
 
 <h3>1. Feature Importance pada Random Forest</h3>
 <p>
-Random Forest mengukur feature importance berdasarkan kontribusi setiap fitur dalam mengurangi impurity pada proses pemisahan node di seluruh pohon. Nilai importance yang lebih tinggi menunjukkan fitur tersebut lebih sering digunakan dan lebih berpengaruh dalam pengambilan keputusan model.</p>
+Random Forest mengukur feature importance berdasarkan kontribusi setiap fitur dalam mengurangi impurity pada proses pemisahan node di seluruh pohon. Nilai importance yang lebih tinggi menunjukkan fitur tersebut lebih sering digunakan dan lebih berpengaruh dalam pengambilan keputusan model.
+</p>
 
 <h3>2. Feature Importance pada Logistic Regression</h3>
 <p>
