@@ -167,6 +167,7 @@ H1: Ada hubungan antara variabel kategorikal dengan status mahasiswa (Target).<b
 
 
 # Data Preparation
+<h2>Data Preparation</h2>
 
 <p>
 Pada tahap ini, data dipersiapkan untuk pemodelan dengan langkah-langkah sebagai berikut:
@@ -179,6 +180,14 @@ Pada tahap ini, data dipersiapkan untuk pemodelan dengan langkah-langkah sebagai
   <li>
     <b>Menghapus Fitur yang Tidak Relevan:</b>
     Fitur-fitur yang tidak memberikan kontribusi signifikan terhadap prediksi atau bersifat redundan dihapus dari dataset. Contoh fitur yang di-drop dapat berupa ID, kode unik, atau fitur yang hasil analisis EDA/statistik menunjukkan tidak berpengaruh (misal: <i>Nationality</i>, <i>International</i>, <i>Educational special needs</i>).
+  </li>
+  <li>
+    <b>Eliminasi Fitur Berdasarkan Korelasi:</b>
+    Untuk mengurangi redundansi dan multikolinearitas, dilakukan eliminasi fitur dengan menggunakan threshold korelasi rendah dan tinggi:
+    <ul>
+      <li>Fitur dengan korelasi absolut di bawah 0.5 dipertimbangkan untuk dihapus jika kurang relevan.</li>
+      <li>Fitur dengan korelasi absolut di atas 0.8 dihapus salah satunya untuk menghindari duplikasi informasi.</li>
+    </ul>
   </li>
   <li>
     <b>Encoding Fitur Kategorikal:</b>
@@ -221,6 +230,31 @@ X_scaled = (X - μ) / σ
     μ adalah rata-rata fitur, σ adalah standar deviasi.
   </li>
 </ul>
+
+<h3>Eliminasi Fitur Berdasarkan Korelasi</h3>
+
+<p>
+Untuk meningkatkan kualitas data dan performa model, dilakukan eliminasi fitur berdasarkan analisis korelasi antar fitur numerik dengan menggunakan dua threshold:
+</p>
+
+<ul>
+  <li><b>Threshold Korelasi Rendah (0.5):</b> Fitur dengan korelasi absolut di bawah 0.5 dianggap memiliki hubungan yang lemah dengan fitur lain dan dapat dipertimbangkan untuk dihapus jika kurang relevan.</li>
+  <li><b>Threshold Korelasi Tinggi (0.8):</b> Fitur dengan korelasi absolut di atas 0.8 menunjukkan redundansi tinggi, sehingga salah satu fitur dari pasangan tersebut dihapus untuk mengurangi multikolinearitas dan kompleksitas model.</li>
+</ul>
+
+<p>
+Langkah-langkah yang dilakukan:
+</p>
+<ol>
+  <li>Menghitung matriks korelasi fitur numerik.</li>
+  <li>Mengidentifikasi fitur dengan korelasi rendah (|r| &lt; 0.5) dan mempertimbangkan penghapusan berdasarkan relevansi domain.</li>
+  <li>Mengidentifikasi fitur dengan korelasi tinggi (|r| &gt; 0.8) dan menghapus fitur yang kurang penting untuk mengurangi redundansi.</li>
+  <li>Memastikan fitur yang tersisa memiliki korelasi moderat yang sehat agar informasi tetap terjaga.</li>
+</ol>
+
+<p>
+Dengan eliminasi ini, dataset menjadi lebih ringkas, mengurangi risiko overfitting, dan memudahkan interpretasi model.
+</p>
 
 # Modeling
 
