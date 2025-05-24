@@ -338,14 +338,14 @@ print(df.isnull().sum().sum())</code></pre>
 </section>
 
 
-  <h3>2. Diagram Pie Chart Sebaran Status Mahasiswa</h3>
+  <h3>2. Sebaran Status Mahasiswa</h3>
   <p>
     Diagram pie chart menunjukkan distribusi status mahasiswa (Dropout, Graduate, Enrolled). Visualisasi ini mengungkapkan bahwa proporsi mahasiswa yang dropout cukup tinggi, yang menjadi perhatian penting dalam analisis keberhasilan studi.
   </p>
   <img src= "https://raw.githubusercontent.com/nadeyyah/Project-Predictive-Student-Dropout-Status/main/asset/asset_1.png" alt="Pie Chart Sebaran Status Mahasiswa" width="400" />
   <p><em>Sumber: <a href="https://github.com/nadeyyah/Project-Predictive-Student-Dropout-Status/blob/main/asset/asset_1.png">Diagram Pie chart </a></em></p>
 
-  <h3>3. Hasil Pengujian Chi-square</h3>
+  <h3>3. Hasil Pengujian Independesi Variabel Kategorik dengan Chi-square</h3>
   <p>
     Pengujian Chi-square digunakan untuk menguji hubungan antara variabel kategorik dengan status mahasiswa. Hipotesis yang diuji adalah:<br>
     <strong>H0:</strong> Tidak ada hubungan signifikan antara variabel kategorik dengan status mahasiswa.<br>
@@ -395,7 +395,7 @@ print(df.isnull().sum().sum())</code></pre>
   <img src= "https://raw.githubusercontent.com/nadeyyah/Project-Predictive-Student-Dropout-Status/main/asset/asset_3.png" alt="Histogram Variabel Numerik" width="900" />
     <p><em>Sumber: <a href="https://github.com/nadeyyah/Project-Predictive-Student-Dropout-Status/blob/main/asset/asset_3.png">Histogram Variabel Numerik</a></em></p>
 
-  <h3>6. Boxplot</h3>
+  <h3>6. Boxplot Variabel Numerik </h3>
   <p>
     Boxplot memberikan gambaran persebaran data, median, dan outlier pada setiap variabel numerik. Visualisasi ini membantu mengidentifikasi nilai ekstrim dan variasi antar mahasiswa, yang penting untuk analisis kualitas data dan deteksi anomali.Outlier ditemukan pada fitur usia masuk, jumlah mata kuliah, dan nilai semester. Mahasiswa dengan nilai rendah dan jumlah mata kuliah lulus sedikit cenderung berisiko dropout.
   </p>
@@ -415,7 +415,7 @@ print(df.isnull().sum().sum())</code></pre>
 
 # DATA PREPARATION
 <section>
-  <h3>1. Menghapus Kolom Kategorik yang Tidak Digunakan</h3>
+  <h3>1. Menghapus Fitur Kategorik yang Tidak Digunakan</h3>
   <p>
     Pada tahap awal, kolom-kolom kategorik yang tidak berpengaruh signifikan terhadap variabel target dihapus. Kolom <code>'Nationality'</code>, <code>'International'</code>, dan <code>'Educational special needs'</code> dihapus berdasarkan hasil uji statistik yang menunjukkan ketidaksignifikanannya.
   </p>
@@ -512,3 +512,281 @@ Name: proportion, dtype: float64
   </pre>
 </section>
 
+# Model Development
+<section>
+  <h3>1. Algoritma yang Digunakan: Random Forest dan Logistic Regression</h3>
+  <p>
+    Pada tahap awal pengembangan model, digunakan dua algoritma yaitu <strong>Random Forest</strong> dan <strong>Logistic Regression</strong>. Alasan pemilihan kedua algoritma ini adalah:
+  </p>
+  <ul>
+    <li><strong>Random Forest:</strong> Algoritma ini kuat terhadap overfitting, mampu menangani data yang kompleks dan fitur yang banyak, serta memberikan interpretasi fitur penting (feature importance).</li>
+    <li><strong>Logistic Regression:</strong> Model yang sederhana dan efektif untuk klasifikasi biner, mudah diinterpretasi, serta memberikan koefisien yang dapat digunakan untuk mengetahui pengaruh masing-masing fitur.</li>
+  </ul>
+  <p>
+    Berikut adalah kode pembentukan model awal dengan parameter <code>class_weight='balanced'</code> untuk mengatasi ketidakseimbangan kelas:
+  </p>
+  <pre style="background:#f4f4f4; padding:1em; border-radius:6px;">
+    
+# Random Forest model with balancing
+rf_model = RandomForestClassifier(class_weight='balanced', random_state=42)
+rf_model.fit(X_train, y_train)
+
+# Logistic Regression with balanced class weights
+logreg_model = LogisticRegression(class_weight='balanced', random_state=42, max_iter=1000)
+logreg_model.fit(X_train, y_train)
+  </pre>
+  <p>
+    Parameter utama yang digunakan adalah:
+  </p>
+  <ul>
+    <li><code>class_weight='balanced'</code>: untuk menyeimbangkan bobot kelas sehingga model tidak bias terhadap kelas mayoritas dan dapat belajar dengan baik pada kelas minoritas.</li>
+    <li><code>random_state=42</code>: untuk memastikan hasil yang konsisten dan dapat direproduksi.</li>
+    <li><code>max_iter=1000</code> pada Logistic Regression: untuk memastikan konvergensi model pada iterasi yang cukup.</li>
+  </ul>
+
+  <h3>2. Hyperparameter Tuning</h3>
+  <p>
+    <strong>Hyperparameter tuning</strong> adalah proses pencarian kombinasi parameter terbaik yang mengatur proses pelatihan model agar performa model optimal. Hyperparameter bukan parameter yang dipelajari oleh model, melainkan diatur sebelum pelatihan dimulai. Proses tuning biasanya melibatkan metode seperti grid search atau random search dengan validasi silang (cross-validation) untuk memilih parameter terbaik berdasarkan metrik evaluasi.
+  </p>
+  <p>Setelah dilakukan tuning, diperoleh parameter terbaik untuk masing-masing model:</p>
+  <pre style="background:#f4f4f4; padding:1em; border-radius:6px;">
+Fitting 5 folds for each of 108 candidates, totalling 540 fits
+Best RF Parameters: {'max_depth': None, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 200}
+
+Fitting 5 folds for each of 10 candidates, totalling 50 fits
+Best Logistic Regression Parameters: {'C': 10, 'penalty': 'l1', 'solver': 'liblinear'}
+  </pre>
+
+  <h3>3. Model dengan 10 Most Important Features</h3>
+  <p>
+    <strong>Most important features</strong> adalah fitur-fitur yang memberikan kontribusi terbesar dalam pengambilan keputusan model. Pada <em>Random Forest</em>, penentuan fitur penting didasarkan pada kontribusi setiap fitur dalam mengurangi impurity (ketidakteraturan) pada proses pemisahan node di seluruh pohon keputusan. Fitur dengan nilai importance lebih tinggi menunjukkan seringnya fitur tersebut digunakan dan pengaruhnya yang besar terhadap prediksi.
+  </p>
+  <p>
+    Sedangkan pada <em>Logistic Regression</em>, fitur penting ditentukan berdasarkan nilai koefisien model; koefisien yang lebih besar (positif atau negatif) menunjukkan pengaruh yang lebih signifikan terhadap probabilitas kelas target.
+  </p>
+  <p>Berikut adalah 10 fitur terpenting untuk masing-masing model:</p>
+
+  <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%; margin-bottom: 1em;">
+    <thead style="background-color: #f2f2f2;">
+      <tr>
+        <th>Feature (Random Forest)</th>
+        <th>Importance</th>
+        <th>Feature (Logistic Regression)</th>
+        <th>Importance</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Curricular units 2nd sem (approved)</td><td>0.240282</td><td>Tuition fees up to date</td><td>2.533112</td></tr>
+      <tr><td>Curricular units 2nd sem (grade)</td><td>0.137025</td><td>Curricular units 2nd sem (approved)</td><td>2.219088</td></tr>
+      <tr><td>Curricular units 2nd sem (evaluations)</td><td>0.089054</td><td>Debtor</td><td>1.376592</td></tr>
+      <tr><td>Curricular units 1st sem (evaluations)</td><td>0.080795</td><td>Gender</td><td>0.772013</td></tr>
+      <tr><td>Course</td><td>0.067452</td><td>Displaced</td><td>0.638837</td></tr>
+      <tr><td>Tuition fees up to date</td><td>0.053354</td><td>Scholarship holder</td><td>0.591102</td></tr>
+      <tr><td>Father's occupation</td><td>0.049474</td><td>Curricular units 1st sem (evaluations)</td><td>0.375179</td></tr>
+      <tr><td>Mother's occupation</td><td>0.043109</td><td>Curricular units 2nd sem (grade)</td><td>0.200681</td></tr>
+      <tr><td>Application mode</td><td>0.040222</td><td>Curricular units 2nd sem (evaluations)</td><td>0.169265</td></tr>
+      <tr><td>Mother's qualification</td><td>0.037606</td><td>Curricular units 2nd sem (enrolled)</td><td>0.125400</td></tr>
+    </tbody>
+  </table>
+</section>
+
+# Evaluation
+<section>
+  <p>
+    Evaluasi model bertujuan untuk mengukur seberapa baik model dapat memprediksi kelas target dengan benar, terutama pada dataset yang tidak seimbang. Dalam penelitian ini, digunakan beberapa metrik evaluasi yaitu <strong>Balanced Accuracy</strong>, <strong>F1 Score</strong>, dan <strong>AUC Score</strong> untuk mendapatkan gambaran yang lebih komprehensif tentang performa model.
+  </p>
+
+  <h3>Metrik Evaluasi dan Rumusnya</h3>
+  <ul>
+    <li>
+      <strong>Balanced Accuracy</strong>: Menghitung rata-rata recall (sensitivitas) dari setiap kelas, sehingga cocok untuk dataset yang tidak seimbang. Rumusnya adalah:
+      <pre style="background:#23272e; color:#fff; padding:0.7em 1em; border-radius:6px; font-family: 'Consolas', 'Monaco', monospace;">
+Balanced Accuracy = (Recall<sub>Positif</sub> + Recall<sub>Negatif</sub>) / 2
+      </pre>
+    </li>
+    <li>
+      <strong>Recall</strong> (Sensitivitas): Mengukur proporsi data positif yang berhasil diprediksi dengan benar. Rumusnya:
+      <pre style="background:#23272e; color:#fff; padding:0.7em 1em; border-radius:6px; font-family: 'Consolas', 'Monaco', monospace;">
+Recall = TP / (TP + FN)
+      </pre>
+      di mana TP = True Positives, FN = False Negatives.
+    </li>
+    <li>
+      <strong>F1 Score</strong>: Harmonis rata-rata dari precision dan recall, memberikan keseimbangan antara keduanya, terutama penting saat data tidak seimbang. Rumusnya:
+      <pre style="background:#23272e; color:#fff; padding:0.7em 1em; border-radius:6px; font-family: 'Consolas', 'Monaco', monospace;">
+F1 = 2 × (Precision × Recall) / (Precision + Recall)
+      </pre>
+    </li>
+    <li>
+      <strong>AUC Score</strong> (Area Under the Curve): Mengukur kemampuan model membedakan antara kelas positif dan negatif melalui kurva ROC. Nilai AUC berkisar antara 0.5 (acak) hingga 1 (sempurna).
+    </li>
+  </ul>
+
+  <h3>Confusion Matrix</h3>
+  <p>Contoh confusion matrix untuk klasifikasi biner:</p>
+  <pre style="background:#f4f4f4; padding:1em; border-radius:6px;">
+          Predicted
+          0     1
+Actual 0  TN    FP
+       1  FN    TP
+  </pre>
+  <p>Keterangan:</p>
+  <ul>
+    <li><strong>TN</strong>: True Negative (kelas negatif yang diprediksi negatif)</li>
+    <li><strong>FP</strong>: False Positive (kelas negatif yang diprediksi positif)</li>
+    <li><strong>FN</strong>: False Negative (kelas positif yang diprediksi negatif)</li>
+    <li><strong>TP</strong>: True Positive (kelas positif yang diprediksi positif)</li>
+  </ul>
+
+  <h3>Hasil Evaluasi Model</h3>
+
+  <h4>1. Random Forest vs Logistic Regression (Binary Classification)</h4>
+  <pre style="background:#f4f4f4; padding:1em; border-radius:6px;">
+Random Forest Performance:
+Balanced Accuracy: 0.831
+F1 Score: 0.931
+AUC Score: 0.909
+
+------------------------------------
+
+Logistic Regression Performance:
+Balanced Accuracy: 0.835
+F1 Score: 0.902
+ROC AUC Score: 0.894
+  
+  </pre>
+
+  <h4>2. Random Forest vs Logistic Regression (Setelah Hyperparameter Tuning)</h4>
+  <pre style="background:#f4f4f4; padding:1em; border-radius:6px;">
+Model Evaluation Results (After Hyperparameter Tuning):
+                 Model  F1 Score  AUC Score  Balanced Accuracy
+0        Random Forest     0.928      0.913              0.829
+1  Logistic Regression     0.902      0.895              0.835
+  </pre>
+
+  <h4>3. Random Forest vs Logistic Regression (Model Terbaik dengan 10 Fitur Terpenting)</h4>
+  <pre style="background:#f4f4f4; padding:1em; border-radius:6px;">
+Final Model Comparison (Top 10 Features Only):
+                                   Model  F1 Score  AUC Score  Balanced Accuracy
+0        Random Forest (Top 10 Features)     0.932      0.893              0.841
+1  Logistic Regression (Top 10 Features)     0.895      0.875              0.833
+  </pre>
+  <p>
+    Berdasarkan hasil evaluasi, <strong>Random Forest</strong> dengan 10 fitur terpenting menunjukkan performa terbaik secara keseluruhan dengan nilai F1 Score tertinggi (0.932), balanced accuracy terbaik (0.841), dan AUC yang kompetitif (0.893). Meskipun Logistic Regression memiliki balanced accuracy sedikit lebih tinggi setelah tuning, Random Forest unggul dalam F1 Score yang lebih baik, yang berarti model ini lebih seimbang dalam memprediksi kelas positif dan negatif.
+  </p>
+  <p>
+    Oleh karena itu, model Random Forest dengan 10 fitur terpenting dipilih sebagai model final karena kemampuannya yang lebih baik dalam menangani ketidakseimbangan kelas dan memberikan prediksi yang lebih akurat secara keseluruhan.
+  </p>
+</section>
+
+# Kesimpulan
+<section>
+  <p>
+    Model <strong>Random Forest</strong> secara konsisten menghasilkan nilai <em>F1 Score</em> dan <em>AUC Score</em> yang lebih tinggi, yang menunjukkan performa lebih baik dalam hal keseimbangan antara precision dan recall serta kemampuan perankingan.
+  </p>
+  <p>
+    <em>Balanced Accuracy</em> sedikit lebih baik pada <strong>Logistic Regression</strong> ketika menggunakan seluruh fitur, namun <strong>Random Forest</strong> unggul saat hanya menggunakan 10 fitur teratas.
+  </p>
+  <p>
+    Setelah dilakukan seleksi fitur, performa <strong>Random Forest</strong> meningkat lebih jauh dan mengungguli <strong>Logistic Regression</strong> pada semua metrik evaluasi.
+  </p>
+
+  <h3>Simulasi Klasifikasi Risiko Mahasiswa</h3>
+  <p>
+    Simulasi risiko dilakukan menggunakan 10 fitur terpenting berikut:
+  </p>
+  <ul>
+    <li>Curricular units 2nd sem (approved)</li>
+    <li>Curricular units 2nd sem (grade)</li>
+    <li>Curricular units 2nd sem (evaluations)</li>
+    <li>Curricular units 1st sem (evaluations)</li>
+    <li>Course</li>
+    <li>Tuition fees up to date</li>
+    <li>Father's occupation</li>
+    <li>Mother's occupation</li>
+    <li>Application mode</li>
+    <li>Mother's qualification</li>
+  </ul>
+
+  <h4>Parameter Transformasi Kebalikan Log dan Standard Scaling</h4>
+  <pre style="background:#f4f4f4; padding:1em; border-radius:6px;">
+original_stats = {
+    'Curricular units 2nd sem (approved)': {'mean': 1.44, 'std': 1.44},
+    'Curricular units 2nd sem (grade)': {'mean': 2.56, 'std': 0.64},
+    'Curricular units 2nd sem (evaluations)': {'mean': 1.63, 'std': 0.69},
+    'Curricular units 1st sem (evaluations)': {'mean': 1.70, 'std': 0.67}
+}
+
+def inverse_transform(value, mean, std):
+    return np.expm1((value * std) + mean)
+  </pre>
+
+  <p>
+  </p>
+
+  <h4>Ambang Batas Klasifikasi Risiko</h4>
+  <pre style="background:#f4f4f4; padding:1em; border-radius:6px;">
+thresholds = {
+    'Curricular units 2nd sem (approved)': [4, 2],  # ≥4 = Safe, ≥2 = Moderate, <2 = At Risk
+    'Curricular units 2nd sem (grade)': [14.0, 10.0],
+    'Curricular units 2nd sem (evaluations)': [6, 3],
+    'Curricular units 1st sem (evaluations)': [6, 3],
+    'Course': [[33, 171, 999], [8012, 9999]],  # Safe and Moderate course IDs
+    'Tuition fees up to date': [[1], [0]],  # 1 = Up-to-date (Safe), 0 = Not (Moderate)
+    "Father's occupation": [[3, 4, 5], [1, 2]],
+    "Mother's occupation": [[3, 4, 5], [1, 2]],
+    'Application mode': [[1, 2], [5, 6]],
+    "Mother's qualification": [[4, 5], [2, 3]]  # 4 = Bachelor's, 5 = Master's
+}
+  </pre>
+
+  <p>
+    Berdasarkan ambang batas ini, setiap fitur diklasifikasikan menjadi kategori <em>Safe</em>, <em>Moderate</em>, atau <em>At Risk</em>, lalu digabungkan untuk menentukan risiko keseluruhan mahasiswa.
+  </p>
+
+  <h4>Hasil Klasifikasi Risiko</h4>
+  <pre style="background:#f4f4f4; padding:1em; border-radius:6px;">
+📊 Risk Classification Summary:
+Overall_Risk
+High Risk        1493
+Moderate Risk     192
+Name: count, dtype: int64
+  </pre>
+
+  <p>Contoh data mahasiswa dengan klasifikasi risiko:</p>
+  <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%; margin-bottom: 1em;">
+    <thead style="background-color: #f2f2f2;">
+      <tr>
+        <th>Curricular units 2nd sem (approved)</th>
+        <th>Curricular units 2nd sem (grade)</th>
+        <th>Curricular units 2nd sem (evaluations)</th>
+        <th>Curricular units 1st sem (evaluations)</th>
+        <th>Course</th>
+        <th>Tuition fees up to date</th>
+        <th>Father's occupation</th>
+        <th>Mother's occupation</th>
+        <th>Application mode</th>
+        <th>Mother's qualification</th>
+        <th>Overall Risk</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>10.68</td><td>20.88</td><td>1.54</td><td>1.82</td><td>9.0</td><td>0.0</td><td>3.0</td><td>3.0</td><td>4.0</td><td>0.0</td><td>High Risk</td></tr>
+      <tr><td>5.28</td><td>11.26</td><td>8.28</td><td>4.64</td><td>13.0</td><td>1.0</td><td>3.0</td><td>5.0</td><td>6.0</td><td>16.0</td><td>Moderate Risk</td></tr>
+      <tr><td>10.68</td><td>15.25</td><td>1.54</td><td>6.53</td><td>1.0</td><td>1.0</td><td>9.0</td><td>9.0</td><td>8.0</td><td>15.0</td><td>High Risk</td></tr>
+      <tr><td>10.68</td><td>25.83</td><td>2.76</td><td>4.64</td><td>8.0</td><td>1.0</td><td>9.0</td><td>9.0</td><td>0.0</td><td>0.0</td><td>High Risk</td></tr>
+    </tbody>
+  </table>
+  <p>
+    Kinerja akademik, khususnya pada semester kedua, dikombinasikan dengan status keuangan dan latar belakang keluarga, merupakan faktor utama dalam memprediksi risiko mahasiswa untuk dropout. Informasi ini dapat membantu fokus intervensi pada mahasiswa yang mengalami kesulitan akademik maupun tantangan finansial dan sosial.
+  </p>
+  <p>
+    Mahasiswa dengan jumlah evaluasi yang rendah atau tidak konsisten serta tingkat kelulusan yang rendah cenderung diklasifikasikan sebagai <strong>High Risk</strong>.
+  </p>
+  <p>
+    Bahkan mahasiswa dengan nilai yang relatif tinggi (misalnya mahasiswa nomor 8 dengan nilai rata-rata 25.83) dapat dikategorikan berisiko tinggi jika faktor lain seperti evaluasi, jurusan, atau latar belakang orang tua menunjukkan potensi masalah.
+  </p>
+  <p>
+    Mahasiswa dengan catatan akademik yang lebih seimbang dan pembayaran biaya kuliah yang lancar (misalnya mahasiswa nomor 3) diklasifikasikan sebagai <strong>Moderate Risk</strong>, menunjukkan bahwa status pembayaran dan partisipasi akademik (evaluasi) berperan penting dalam menurunkan tingkat risiko.
+  </p>
+</section>
