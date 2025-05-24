@@ -281,7 +281,7 @@ memory usage: 674.8 KB
 </body>
 </html>
 
-## Check Duplikasi data dan Missing Value
+<h3>Check Duplikasi data dan Missing Value</h3> 
 Setelah dilakukan perbaikan tipe data dari variabel yang sesuai, dilakukan penge<i>chek</i>-an data yang duplikat serta data yang hilang. 
 Tidak ditemukan data terduplikat dan missing value. 
 <section>
@@ -293,7 +293,7 @@ print(df.isnull().sum().sum())</code></pre>
 0</code></pre>
 </section>
 
-## Exploratory Data Analysis (EDA)
+<h3>Exploratory Data Analysis (EDA)</h3>
 
 <section>
   <h3>1. Statistika Deskriptif</h3>
