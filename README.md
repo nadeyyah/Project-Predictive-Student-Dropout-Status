@@ -487,7 +487,7 @@ X scaled = (X - μ) / σ
 
   <h3>8. Identifikasi Fitur untuk Klasifikasi</h3>
   <p>
-    Variabel fitur <code>X</code> merupakan gabungan dari variabel numerik dan kategorik yang telah dipilih dan diproses, siap digunakan untuk pemodelan klasifikasi.
+    Variabel fitur <code>X</code> merupakan gabungan dari variabel numerik dan kategorik yang telah dipilih dan diproses, siap digunakan untuk pemodelan klasifikasi sedangkan <code> y </code> adalah Target .
   </p>
 
   <h3>9. Pembagian Data Training dan Testing</h3>
@@ -621,6 +621,13 @@ F1 = 2 × (Precision × Recall) / (Precision + Recall)
       <strong>AUC Score</strong> (Area Under the Curve): Mengukur kemampuan model membedakan antara kelas positif dan negatif melalui kurva ROC. Nilai AUC berkisar antara 0.5 (acak) hingga 1 (sempurna).
     </li>
   </ul>
+  
+<p>
+  $$ \text{TPR} = \frac{TP}{TP + FN} $$
+</p>
+<p>
+  $$ \text{FPR} = \frac{FP}{FP + TN} $$
+</p>
 
   <h3>Confusion Matrix</h3>
   <p>Contoh confusion matrix untuk klasifikasi biner:</p>
